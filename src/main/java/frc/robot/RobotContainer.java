@@ -20,13 +20,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.autos.AutoTrajectories;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 import com.reduxrobotics.canand.CANandEventLoop;
 import com.reduxrobotics.sensors.canandcoder.CANandcoder;
 import com.reduxrobotics.sensors.canandcoder.CANandcoderStatus;
+
+import frc.robot.autos.AutoChooser;
+import frc.robot.autos.AutoTrajectories;
+import frc.robot.autos.eventMap;
 
 
 /**
@@ -41,6 +44,11 @@ public class RobotContainer {
     public final Swerve s_Swerve = new Swerve();
     private final Intake s_Intake = new Intake();
     private final Arm s_Arm = new Arm();
+
+    private final eventMap map = new eventMap(s_Swerve, s_Intake, s_Arm);
+    private final AutoTrajectories trajectories = new AutoTrajectories();
+    private final AutoChooser chooser = new AutoChooser(trajectories, map.getMap(), s_Swerve, s_Intake, s_Arm);
+
 
     //private final Arm s_Arm = new Arm(s_Arm.getEncoder());  // TK 45 - FIX THIS JTL 9-12-23
 
@@ -102,14 +110,13 @@ public class RobotContainer {
         new TeleopIntake(
           s_Intake,
           operator
-        )
+        )      
       );
         
       // Configure the button bindings
       configureButtonBindings();
 
-      //SmartDashboard.putData("Auto Choices", chooser.getAutoChooser());
-      
+      SmartDashboard.putData("Auto Choices", chooser.getAutoChooser());
     }
 
     /**
@@ -152,9 +159,6 @@ public class RobotContainer {
 
     public void printValues()
     {
-        SmartDashboard.putNumber("balanceP", 0.03);
-
-        SmartDashboard.putBoolean("Pov pressed", y_button_op.getAsBoolean());
         SmartDashboard.putNumber("yaw", s_Swerve.gyro.getYaw());
         SmartDashboard.putNumber("pitch", s_Swerve.gyro.getPitch());
         SmartDashboard.putNumber("roll", s_Swerve.gyro.getRoll());
@@ -166,13 +170,13 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
 
-     /*/
+     
     public Command getAutonomousCommand() 
     {
       Constants.gyroOffset = s_Swerve.gyro.getPitch();
       //s_Swerve.zeroGyro();
       s_Swerve.gyro.setYaw(180);
-      //return chooser.getCommand();  // TK 45 - FIX THIS JTL 9-12-23
+      return chooser.getCommand();
     }
-    */
+    
 }
