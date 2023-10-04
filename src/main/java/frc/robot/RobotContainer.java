@@ -28,6 +28,7 @@ import com.reduxrobotics.canand.CANandEventLoop;
 import com.reduxrobotics.sensors.canandcoder.CANandcoder;
 import com.reduxrobotics.sensors.canandcoder.CANandcoderStatus;
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -39,11 +40,9 @@ public class RobotContainer {
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
     private final Intake s_Intake = new Intake();
-    //private final Arm s_Arm = new Arm(s_Arm.getEncoder());  // TK 45 - FIX THIS JTL 9-12-23
+    private final Arm s_Arm = new Arm();
 
-    //private final eventMap map = new eventMap(s_Swerve, s_Intake, s_Wrist, s_Elevator);
-    private final AutoTrajectories trajectories = new AutoTrajectories();
-    //private final AutoChooser chooser = new AutoChooser(trajectories, map.getMap(), s_Swerve, s_Intake, s_Wrist, s_Elevator);
+    //private final Arm s_Arm = new Arm(s_Arm.getEncoder());  // TK 45 - FIX THIS JTL 9-12-23
 
     private String pPlan = null;
     public double intakeVec = 0;
@@ -81,6 +80,9 @@ public class RobotContainer {
 
     /* Variables */
     boolean driveStatus = false;
+
+    /* PathPlanner Setup */
+    public static final HashMap<String, Command> AUTO_EVENT_MAP = new HashMap<>();
 
     
     
@@ -124,30 +126,30 @@ public class RobotContainer {
 
         a_button_op.onTrue(   // Preset to go to front LOW Pickup / Score
           Commands.sequence(
-            //new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE)) // TK 45 - FIX THIS JTL 9-12-23
+            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE))
           )
         );
 
         b_button_op.onTrue(  // Preset to go to front MID Pickup / Score
           Commands.sequence(
-            //new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_FRONT_SCORE)) // TK 45 - FIX THIS JTL 9-12-23
+            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_FRONT_SCORE)) // TK 45 - FIX THIS JTL 9-12-23
           )
         );
 
         x_button_op.onTrue(  // Preset to go to back LOW Pickup / Score
           Commands.sequence(
-            //new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
+            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
           )
         );
 
         y_button_op.onTrue(  // Preset to go to back MID Pickup / Score
           Commands.sequence(
-            //new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
+            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
           )
         );
-        
     }
-    
+
+
     public void printValues()
     {
         SmartDashboard.putNumber("balanceP", 0.03);

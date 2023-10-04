@@ -25,26 +25,24 @@ public class Arm extends SubsystemBase
     private PIDController pidController = new PIDController(Constants.ARM_P, Constants.ARM_I, Constants.ARM_D);
 
     double target = 0;
-    DigitalInput armSwitchForward = new DigitalInput(1); //limit switch that re-zeros the arm encoder when forward
+    DigitalInput armSwitchForward = new DigitalInput(1); //limit switch that re-zeros the arm encoder when forward // Probably won't use
     CANandcoder m_encoder;
 
     public Arm() 
     {
-        arm = new CANSparkMax(60, MotorType.kBrushed);  // TK 45 - Update CAN ID
-        m_encoder = new CANandcoder(61); // CANandCoder id 61
+        arm = new CANSparkMax(60, MotorType.kBrushed);   //TK 45 - // NEED to Assign CAN ID    // NEED to change to Talon
+        m_encoder = new CANandcoder(61); // CANandCoder ID 61
 
         arm.restoreFactoryDefaults();
         arm.setSmartCurrentLimit(70);
         arm.setInverted(false);      
     }
-
-    /*
-    public CANandcoder getEncoder()     // TK 45 - FIX THIS FOR REDUX CANandCoder JTL 9-12-23
-    {
-        return m_encoder.getAbsPosition();
-    }
-    */
     
+    
+    public CANandcoder getEncoder()
+    {
+        return m_encoder;
+    }
     
     public double getTarget() 
     {
