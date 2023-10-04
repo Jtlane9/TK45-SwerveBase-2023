@@ -39,7 +39,8 @@ public class eventMap
         );
     }
 
-    public HashMap<String, Command> getMap() {
+    public HashMap<String, Command> getMap() 
+    {
         return eventMap;
     }
 
