@@ -49,7 +49,6 @@ public class RobotContainer {
     private final AutoTrajectories trajectories = new AutoTrajectories();
     private final AutoChooser chooser = new AutoChooser(trajectories, map.getMap(), s_Swerve, s_Intake, s_Arm);
 
-
     //private final Arm s_Arm = new Arm(s_Arm.getEncoder());  // TK 45 - FIX THIS JTL 9-12-23
 
     private String pPlan = null;

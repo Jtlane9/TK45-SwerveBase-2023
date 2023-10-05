@@ -72,7 +72,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit() 
   {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();  // Comment this out if Auto breaks thing (no auto) JTL 10-5-23
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

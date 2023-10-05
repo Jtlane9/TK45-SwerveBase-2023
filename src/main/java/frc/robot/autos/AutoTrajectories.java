@@ -8,7 +8,7 @@ import frc.robot.Constants;
 
 public class AutoTrajectories 
 {
-    private PathPlannerTrajectory defaultAuto, justLeave, scoreAndLeave;
+    private PathPlannerTrajectory defaultAuto, justLeave, scoreAndLeave, doNothing;
 
     private final PathConstraints constraints, slowConstraints;
     
@@ -20,19 +20,25 @@ public class AutoTrajectories
 
     public PathPlannerTrajectory defaultAuto() 
     {
-        defaultAuto = PathPlanner.loadPath("justLeave", constraints);
+        defaultAuto = PathPlanner.loadPath("justLeave", constraints, false);
         return defaultAuto;
+    }
+
+    public PathPlannerTrajectory doNothing()
+    {
+        doNothing = PathPlanner.loadPath("doNothing", constraints, false);
+        return doNothing;
     }
 
     public PathPlannerTrajectory justLeave() 
     {
-        justLeave = PathPlanner.loadPath("justLeave", constraints);
+        justLeave = PathPlanner.loadPath("justLeave", constraints, false);
         return justLeave;
     }
 
     public PathPlannerTrajectory scoreAndLeave()
     {
-        scoreAndLeave = PathPlanner.loadPath("scoreAndLeave", constraints);
+        scoreAndLeave = PathPlanner.loadPath("scoreAndLeave", constraints, false);
         return scoreAndLeave;
     }
 }

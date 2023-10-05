@@ -48,8 +48,9 @@ public class AutoChooser
         this.trajectories = trajectories;
         
         m_chooser.setDefaultOption("Default Auto", AutonomousMode.kDefaultAuto);
+        m_chooser.addOption("doNothing", AutonomousMode.kDoNothing);
         m_chooser.addOption("justLeave", AutonomousMode.kJustLeave);
-        m_chooser.addOption("scoreAndLeave", AutonomousMode.kscoreAndLeave);
+        m_chooser.addOption("scoreAndLeave", AutonomousMode.kScoreAndLeave);
     }
 
     public SendableChooser<AutonomousMode> getAutoChooser() 
@@ -62,6 +63,23 @@ public class AutoChooser
         return thetaController;
     }
 
+    public PPSwerveControllerCommand createControllerCommand(PathPlannerTrajectory trajectory) 
+    {
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        return new PPSwerveControllerCommand
+        (trajectory, 
+        s_Swerve::getPose,
+        Constants.Swerve.swerveKinematics , 
+        new PIDController(1, 0, 0), 
+        new PIDController(1, 0, 0), 
+        thetaController,
+        s_Swerve::setModuleStates,
+        true,
+        s_Swerve
+        );
+    }
+
+
     public Command defaultAuto() 
     {
         var swerveCommand = createControllerCommand(trajectories.defaultAuto());
@@ -73,10 +91,30 @@ public class AutoChooser
 
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
-            new SequentialCommandGroup(eventMap.get("justLeave")),
+            new SequentialCommandGroup(eventMap.get("defaultAuto")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.defaultAuto().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
+        return command;
+    }
+
+    public Command doNothing()
+    {
+        var swerveCommand = createControllerCommand(trajectories.doNothing());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+        swerveCommand,
+        trajectories.doNothing().getMarkers(),
+        eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands
+        (       
+            new SequentialCommandGroup(eventMap.get("doNothing")),
+            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.doNothing().getInitialHolonomicPose())),
+            new SequentialCommandGroup(followCommand)
+        );
+
         return command;
     }
 
@@ -117,35 +155,21 @@ public class AutoChooser
         return command;
     }
 
-
-
-    public PPSwerveControllerCommand createControllerCommand(PathPlannerTrajectory trajectory) 
-    {
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
-        return new PPSwerveControllerCommand
-        (trajectory, 
-        s_Swerve::getPose,
-        Constants.Swerve.swerveKinematics , 
-        new PIDController(1, 0, 0), 
-        new PIDController(1, 0, 0), 
-        thetaController,
-        s_Swerve::setModuleStates,
-        true,
-        s_Swerve
-        );
-    }
-
     public Command getCommand() 
     {
         switch (m_chooser.getSelected()) {
             case kDefaultAuto :
             return defaultAuto();
 
+            case kDoNothing :
+            return doNothing();
+
             case kJustLeave :
             return justLeave();
 
-            case kscoreAndLeave :
+            case kScoreAndLeave :
             return scoreAndLeave();
+
         }
         return defaultAuto();
     }
@@ -153,7 +177,7 @@ public class AutoChooser
 
     private enum AutonomousMode 
     {
-        kDefaultAuto, kJustLeave, kscoreAndLeave
+        kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing
     }
 
     
