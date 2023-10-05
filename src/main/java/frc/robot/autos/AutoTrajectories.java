@@ -20,25 +20,25 @@ public class AutoTrajectories
 
     public PathPlannerTrajectory defaultAuto() 
     {
-        defaultAuto = PathPlanner.loadPath("justLeave", constraints, false);
+        defaultAuto = PathPlanner.loadPath("justLeave", constraints);
         return defaultAuto;
     }
 
     public PathPlannerTrajectory doNothing()
     {
-        doNothing = PathPlanner.loadPath("doNothing", constraints, false);
+        doNothing = PathPlanner.loadPath("doNothing", constraints);
         return doNothing;
     }
 
     public PathPlannerTrajectory justLeave() 
     {
-        justLeave = PathPlanner.loadPath("justLeave", constraints, false);
+        justLeave = PathPlanner.loadPath("justLeave", constraints);
         return justLeave;
     }
 
     public PathPlannerTrajectory scoreAndLeave()
     {
-        scoreAndLeave = PathPlanner.loadPath("scoreAndLeave", constraints, false);
+        scoreAndLeave = PathPlanner.loadPath("scoreAndLeave", constraints);
         return scoreAndLeave;
     }
 }

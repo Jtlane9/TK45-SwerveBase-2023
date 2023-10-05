@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.commands.AutoBalance;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Swerve;
@@ -121,6 +120,7 @@ public class AutoChooser
 
     public Command justLeave()
     {
+        
         var swerveCommand = createControllerCommand(trajectories.justLeave());
 
         FollowPathWithEvents followCommand = new FollowPathWithEvents(
@@ -128,6 +128,7 @@ public class AutoChooser
             trajectories.justLeave().getMarkers(),
             eventMap);
 
+        /*
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
             new SequentialCommandGroup(eventMap.get("justLeave")),
@@ -135,6 +136,14 @@ public class AutoChooser
             new SequentialCommandGroup(followCommand)
         );
         return command;
+        */
+
+        // Carl's Attempt:
+        return new SequentialCommandGroup(new SequentialCommandGroup(
+            eventMap.get("justLeave")),
+            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.justLeave().getInitialHolonomicPose())),
+            new SequentialCommandGroup(followCommand)
+        );
     }
 
     public Command scoreAndLeave()
@@ -174,12 +183,9 @@ public class AutoChooser
         return defaultAuto();
     }
 
-
     private enum AutonomousMode 
     {
         kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing
     }
-
-    
 
 }
