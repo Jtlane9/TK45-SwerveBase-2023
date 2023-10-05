@@ -164,8 +164,10 @@ public class AutoChooser
         return command;
     }
 
+    
     public Command getCommand() 
     {
+        
         switch (m_chooser.getSelected()) {
             case kDefaultAuto :
             return defaultAuto();
@@ -183,6 +185,7 @@ public class AutoChooser
         return defaultAuto();
     }
 
+    
     private enum AutonomousMode 
     {
         kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing
