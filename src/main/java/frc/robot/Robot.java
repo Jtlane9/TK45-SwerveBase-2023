@@ -11,9 +11,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import com.reduxrobotics.canand.CANandEventLoop;
 
-
-//import frc.robot.subsystems.Lights;
-
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -43,8 +40,6 @@ public class Robot extends TimedRobot
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
-    
   }
 
 
@@ -68,10 +63,7 @@ public class Robot extends TimedRobot
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() 
-  {
-    //Lights.showLights("green");
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
@@ -80,18 +72,20 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit() 
   {
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand();  // TK 45 - FIX THIS JTL 9-12-23
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-    
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic()
+  {
+
+  }
 
   @Override
   public void teleopInit() 

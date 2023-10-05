@@ -8,12 +8,10 @@ import frc.robot.Constants;
 
 public class AutoTrajectories 
 {
-
-    private PathPlannerTrajectory defaultAuto, justLeave;
-
+    private PathPlannerTrajectory defaultAuto, justLeave, scoreAndLeave;
 
     private final PathConstraints constraints, slowConstraints;
-
+    
     public AutoTrajectories() 
     {
         constraints = new PathConstraints(Constants.Swerve.maxSpeed, Constants.Swerve.maxAccel);
@@ -22,7 +20,7 @@ public class AutoTrajectories
 
     public PathPlannerTrajectory defaultAuto() 
     {
-        defaultAuto = PathPlanner.loadPath("defaultAuto", constraints);
+        defaultAuto = PathPlanner.loadPath("justLeave", constraints);
         return defaultAuto;
     }
 
@@ -30,5 +28,11 @@ public class AutoTrajectories
     {
         justLeave = PathPlanner.loadPath("justLeave", constraints);
         return justLeave;
+    }
+
+    public PathPlannerTrajectory scoreAndLeave()
+    {
+        scoreAndLeave = PathPlanner.loadPath("scoreAndLeave", constraints);
+        return scoreAndLeave;
     }
 }

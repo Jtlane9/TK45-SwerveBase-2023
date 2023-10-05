@@ -34,7 +34,7 @@ public class AutoChooser
     private final Arm s_Arm;
     
 
-    private final SendableChooser<AutonomousMode> m_chooser= new SendableChooser<>();
+    private final SendableChooser<AutonomousMode> m_chooser = new SendableChooser<>();
     private HashMap<String, Command> eventMap;
     private PIDController thetaController = new PIDController(0.05, 0.005, 0.009);
 
@@ -47,9 +47,9 @@ public class AutoChooser
         this.eventMap = eventMap;
         this.trajectories = trajectories;
         
-
         m_chooser.setDefaultOption("Default Auto", AutonomousMode.kDefaultAuto);
         m_chooser.addOption("justLeave", AutonomousMode.kJustLeave);
+        m_chooser.addOption("scoreAndLeave", AutonomousMode.kscoreAndLeave);
     }
 
     public SendableChooser<AutonomousMode> getAutoChooser() 
@@ -72,18 +72,18 @@ public class AutoChooser
         eventMap);
 
         SequentialCommandGroup command = new SequentialCommandGroup();
-        //command.addCommands( eventMap.get("scoreCubeHigh"));
         command.addCommands(
-            new SequentialCommandGroup(eventMap.get("scoreCubeMid, Leave")),
+            new SequentialCommandGroup(eventMap.get("justLeave")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.defaultAuto().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
         return command;
     }
 
+
     public Command justLeave()
     {
-        var swerveCommand = createControllerCommand(trajectories.defaultAuto());
+        var swerveCommand = createControllerCommand(trajectories.justLeave());
 
         FollowPathWithEvents followCommand = new FollowPathWithEvents(
             swerveCommand,
@@ -99,9 +99,28 @@ public class AutoChooser
         return command;
     }
 
+    public Command scoreAndLeave()
+    {
+        var swerveCommand = createControllerCommand(trajectories.scoreAndLeave());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+            swerveCommand,
+            trajectories.scoreAndLeave().getMarkers(),
+            eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreAndLeave")),
+            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
+            new SequentialCommandGroup(followCommand)
+        );
+        return command;
+    }
 
 
-    public PPSwerveControllerCommand createControllerCommand(PathPlannerTrajectory trajectory) {
+
+    public PPSwerveControllerCommand createControllerCommand(PathPlannerTrajectory trajectory) 
+    {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         return new PPSwerveControllerCommand
         (trajectory, 
@@ -116,20 +135,25 @@ public class AutoChooser
         );
     }
 
-    public Command getCommand() {
+    public Command getCommand() 
+    {
         switch (m_chooser.getSelected()) {
             case kDefaultAuto :
             return defaultAuto();
 
             case kJustLeave :
             return justLeave();
+
+            case kscoreAndLeave :
+            return scoreAndLeave();
         }
         return defaultAuto();
     }
 
 
-    private enum AutonomousMode {
-        kDefaultAuto, kJustLeave
+    private enum AutonomousMode 
+    {
+        kDefaultAuto, kJustLeave, kscoreAndLeave
     }
 
     

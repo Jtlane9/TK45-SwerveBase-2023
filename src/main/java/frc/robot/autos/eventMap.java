@@ -27,8 +27,8 @@ public class eventMap
 
         eventMap.put("autoCorrect", new InstantCommand(() -> s_Swerve.rotateToDegree(180)));
 
-        eventMap.put( // scores cube and stows automatically
-            "scoreCubeMid, Leave", 
+        eventMap.put( // scores MID cube and stows arm
+            "scoreCubeMid", 
             Commands.sequence(
             new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_FRONT_SCORE)),
             new WaitCommand(0.75), // TK45 - May need to adjust time
