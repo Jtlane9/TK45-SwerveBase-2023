@@ -20,7 +20,7 @@ public class AutoTrajectories
 
     public PathPlannerTrajectory defaultAuto() 
     {
-        defaultAuto = PathPlanner.loadPath("justLeave", constraints);
+        defaultAuto = PathPlanner.loadPath("defaultAuto", constraints);
         return defaultAuto;
     }
 

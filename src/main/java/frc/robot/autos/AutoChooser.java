@@ -167,7 +167,6 @@ public class AutoChooser
     
     public Command getCommand() 
     {
-        
         switch (m_chooser.getSelected()) {
             case kDefaultAuto :
             return defaultAuto();
@@ -180,7 +179,6 @@ public class AutoChooser
 
             case kScoreAndLeave :
             return scoreAndLeave();
-
         }
         return defaultAuto();
     }

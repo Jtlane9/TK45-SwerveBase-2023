@@ -39,7 +39,8 @@ import frc.robot.autos.eventMap;
  * subsystems, commands, and button mappings) should be declared here.
  */
 
-public class RobotContainer {
+public class RobotContainer 
+{
     /* Subsystems */
     public final Swerve s_Swerve = new Swerve();
     private final Intake s_Intake = new Intake();
@@ -91,10 +92,9 @@ public class RobotContainer {
     /* PathPlanner Setup */
     public static final HashMap<String, Command> AUTO_EVENT_MAP = new HashMap<>();
 
-    
-    
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
+    public RobotContainer() 
+    {
       s_Swerve.setDefaultCommand(
         new TeleopSwerve(
           s_Swerve, 
