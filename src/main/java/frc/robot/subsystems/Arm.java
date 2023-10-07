@@ -61,10 +61,10 @@ public class Arm extends SubsystemBase
         arm.set(pidController.calculate(m_encoder.getAbsPosition(), target));
     }
 
-    public void setAngle(double angle) // No implementation - Is this still true?? JTL 9-12-23
+    public void setAngle(double angle) 
     {
         System.out.print("setting angle");
-        if (angle < m_encoder.getAbsPosition() && !forwardArmSwitchTriggered()) // Re-Zeroes Encoder
+        if (angle < m_encoder.getAbsPosition() && !forwardArmSwitchTriggered()) // Re-Zeroes Encoder    // May need to remove limit switch reference - if not using
         {
             m_encoder.setPosition(0);
             angle = 0;
@@ -77,7 +77,7 @@ public class Arm extends SubsystemBase
         target = angle;
     }
 
-    public void moveArm(double movementVector)  // What actually moves the arm when a position is set.
+    public void moveArm(double movementVector)  // What actually moves the arm when a position is set. (JTL - ????)
     {
         
         if(movementVector < 0 && forwardArmSwitchTriggered())

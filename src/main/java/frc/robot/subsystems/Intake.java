@@ -44,33 +44,13 @@ public class Intake extends SubsystemBase
 
     public void runIntake(Joystick joystick)    // Controls on Operator Controller - Gamepad (PS4 Controller I think)
     {
-        if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube Intake - Right Front Bumper
+        if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube / Cone Intake - Right Front Bumper
         {
-            intakeLeft.set(ControlMode.PercentOutput, -1); 
-            intakeCube = true;
-            gripper.setAngle(90);  // TK 45 - CHANGE VALUE // Set to Open (Cube) Mode
-
+            intakeLeft.set(ControlMode.PercentOutput, -1); // TK45 - Probs need to adjust speed
         } 
-        else if (joystick.getRawButton(XboxController.Button.kLeftBumper.value)) // Cube Outtake - Left Front Bumper
+        else if (joystick.getRawButton(XboxController.Button.kLeftBumper.value)) // Cube / Cone Outtake - Left Front Bumper
         {
             intakeLeft.set(ControlMode.PercentOutput, 0.7); // TK45 - Probs need to adjust speed
-            intakeCube = true;
-            gripper.setAngle(90);  // TK 45 - CHANGE VALUE // Set to Open (Cube) Mode
-
-        } 
-        else if (joystick.getRawAxis(XboxController.Axis.kRightTrigger.value) > 0.2)    // Cone Intake - Right Back Trigger
-        {
-            intakeLeft.set(ControlMode.PercentOutput, 0.65); // TK45 - Probs need to adjust speed
-            intakeCube = false;
-            gripper.setAngle(0);  // TK 45 - CHANGE VALUE // Set to Closed (Cone) Mode
-
-        } 
-        else if (joystick.getRawAxis(XboxController.Axis.kLeftTrigger.value) > 0.2)     // Cone Outtake - Left Back Trigger
-        {
-            intakeLeft.set(ControlMode.PercentOutput, -0.7); // TK45 - Probs need to adjust speed
-            intakeCube = false;
-            gripper.setAngle(0);  // TK 45 - CHANGE VALUE // Set to Closed (Cone) Mode
-
         } 
         else 
         {
@@ -79,5 +59,39 @@ public class Intake extends SubsystemBase
             // TK 45 - 10-3-23 Probably need to set to slow constant IN to hold cube (PID won't cut it); (Also, no encoder);
 
         }
+        // For adjustable Cone / Cube Intake:
+        /*
+        if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube Intake - Right Front Bumper
+        {
+            intakeLeft.set(ControlMode.PercentOutput, -1); 
+            intakeCube = true;
+            gripper.setAngle(90);  // TK 45 - CHANGE VALUE // Set to Open (Cube) Mode
+        } 
+        else if (joystick.getRawButton(XboxController.Button.kLeftBumper.value)) // Cube Outtake - Left Front Bumper
+        {
+            intakeLeft.set(ControlMode.PercentOutput, 0.7); // TK45 - Probs need to adjust speed
+            intakeCube = true;
+            gripper.setAngle(90);  // TK 45 - CHANGE VALUE // Set to Open (Cube) Mode
+        } 
+        else if (joystick.getRawAxis(XboxController.Axis.kRightTrigger.value) > 0.2)    // Cone Intake - Right Back Trigger
+        {
+            intakeLeft.set(ControlMode.PercentOutput, 0.65); // TK45 - Probs need to adjust speed
+            intakeCube = false;
+            gripper.setAngle(0);  // TK 45 - CHANGE VALUE // Set to Closed (Cone) Mode
+        } 
+        else if (joystick.getRawAxis(XboxController.Axis.kLeftTrigger.value) > 0.2)     // Cone Outtake - Left Back Trigger
+        {
+            intakeLeft.set(ControlMode.PercentOutput, -0.7); // TK45 - Probs need to adjust speed
+            intakeCube = false;
+            gripper.setAngle(0);  // TK 45 - CHANGE VALUE // Set to Closed (Cone) Mode
+        } 
+        else 
+        {
+            // Might need to add a line to set intake to cube by default when no buttons pressed
+            intakeLeft.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  
+            // TK 45 - 10-3-23 Probably need to set to slow constant IN to hold cube (PID won't cut it); (Also, no encoder);
+
+        }
+        */
     }
 }
