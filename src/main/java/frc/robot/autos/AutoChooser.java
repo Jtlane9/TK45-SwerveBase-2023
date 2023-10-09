@@ -32,17 +32,15 @@ public class AutoChooser
     private final Intake s_Intake;
     private final Arm s_Arm;
     
-
     private final SendableChooser<AutonomousMode> m_chooser = new SendableChooser<>();
     private HashMap<String, Command> eventMap;
     private PIDController thetaController = new PIDController(0.05, 0.005, 0.009);
 
-
     public AutoChooser(AutoTrajectories trajectories, HashMap<String, Command> eventMap, Swerve s_Swerve, Intake s_Intake, Arm s_Arm) 
     {
         this.s_Swerve = s_Swerve;
-        this.s_Arm = s_Arm;
         this.s_Intake = s_Intake;
+        this.s_Arm = s_Arm;
         this.eventMap = eventMap;
         this.trajectories = trajectories;
         
@@ -90,7 +88,7 @@ public class AutoChooser
 
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
-            new SequentialCommandGroup(eventMap.get("defaultAuto")),
+            //new SequentialCommandGroup(eventMap.get("defaultAuto")),  // JTL 10-9-23
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.defaultAuto().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
@@ -109,7 +107,6 @@ public class AutoChooser
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands
         (       
-            new SequentialCommandGroup(eventMap.get("doNothing")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.doNothing().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
@@ -128,22 +125,13 @@ public class AutoChooser
             trajectories.justLeave().getMarkers(),
             eventMap);
 
-        /*
+        
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
-            new SequentialCommandGroup(eventMap.get("justLeave")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.justLeave().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
         return command;
-        */
-
-        // Carl's Attempt:
-        return new SequentialCommandGroup(new SequentialCommandGroup(
-            eventMap.get("justLeave")),
-            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.justLeave().getInitialHolonomicPose())),
-            new SequentialCommandGroup(followCommand)
-        );
     }
 
     public Command scoreAndLeave()
@@ -157,7 +145,6 @@ public class AutoChooser
 
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
-            new SequentialCommandGroup(eventMap.get("scoreAndLeave")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );

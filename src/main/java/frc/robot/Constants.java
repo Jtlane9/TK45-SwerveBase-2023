@@ -111,11 +111,11 @@ public final class Constants
 
         /* Swerve Profiling Values */
         /** Meters per Second */    // Controls the translational speed and acceleration of the robot (left joystick)
-        public static final double maxSpeed = .1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
-        public static final double maxAccel = .1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
+        public static final double maxSpeed = 4.1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
+        public static final double maxAccel = 4.1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
 
         /** Radians per Second */ // Controls the rotational speed of the robot (right joystick)
-        public static final double maxAngularVelocity = .125; //TODO: This must be tuned to specific robot  // TK 45 JTL 9-26-23 Was 10
+        public static final double maxAngularVelocity = 10; //TODO: This must be tuned to specific robot  // TK 45 JTL 9-26-23 Was 10
         
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

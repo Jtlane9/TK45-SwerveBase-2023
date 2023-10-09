@@ -67,8 +67,8 @@ public class RobotContainer
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
     //op controls
-    private final int wristAxis = XboxController.Axis.kLeftY.value; // Left Joystick
-    private final int ArmAxis = XboxController.Axis.kRightY.value;
+    //private final int wristAxis = XboxController.Axis.kLeftY.value; // Left Joystick
+    //private final int ArmAxis = XboxController.Axis.kRightY.value;
 
     private final JoystickButton y_button_op = new JoystickButton(operator, XboxController.Button.kY.value); // Y Button
     private final JoystickButton x_button_op = new JoystickButton(operator, XboxController.Button.kX.value); // X Button
@@ -76,9 +76,9 @@ public class RobotContainer
     private final JoystickButton b_button_op = new JoystickButton(operator, XboxController.Button.kB.value); // B Button
 
 
-    private final POVButton w_preset_0 = new POVButton(operator, 0);
-    private final POVButton w_preset_1 = new POVButton(operator, 90);
-    private final POVButton w_preset_2 = new POVButton(operator, 180);
+    //private final POVButton w_preset_0 = new POVButton(operator, 0);
+    //private final POVButton w_preset_1 = new POVButton(operator, 90);
+    //private final POVButton w_preset_2 = new POVButton(operator, 180);
 
 
     /* Driver Buttons */
@@ -168,8 +168,6 @@ public class RobotContainer
      *
      * @return the command to run in autonomous
      */
-
-     
     public Command getAutonomousCommand() 
     {
       Constants.gyroOffset = s_Swerve.gyro.getPitch();
@@ -177,5 +175,4 @@ public class RobotContainer
       s_Swerve.gyro.setYaw(180);
       return chooser.getCommand();
     }
-    
 }
