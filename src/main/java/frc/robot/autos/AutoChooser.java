@@ -117,7 +117,6 @@ public class AutoChooser
 
     public Command justLeave()
     {
-        
         var swerveCommand = createControllerCommand(trajectories.justLeave());
 
         FollowPathWithEvents followCommand = new FollowPathWithEvents(
