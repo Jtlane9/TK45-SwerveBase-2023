@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Servo;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -18,19 +19,22 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class Intake extends SubsystemBase 
 {
     private TalonSRX intakeLeft;
-    Servo gripper = new Servo(0);    // TK 45 - NEED TO UPDATE PWM PORT NUMBER
-    // Add a second CAN ID for second intake motor
-    public boolean intakeCube = true;
+    private TalonSRX intakeRight;
+    //Servo gripper = new Servo(0);    // TK 45 - NEED TO UPDATE PWM PORT NUMBER
+    //public boolean intakeCube = true;
 
     public Intake() 
     {
-        intakeLeft = new TalonSRX(70);
-        intakeLeft.setInverted(true);       
+        intakeLeft = new TalonSRX(Constants.IntakeLeftID);
+        intakeLeft.setInverted(true);     
+        intakeRight = new TalonSRX(Constants.IntakeRightID);
+        intakeRight.setInverted(false);
     }
 
     public void setSpeed(double speed) 
     {
         intakeLeft.set(ControlMode.PercentOutput, speed); 
+        intakeRight.set(ControlMode.PercentOutput, speed);
     }
 
 
@@ -42,23 +46,31 @@ public class Intake extends SubsystemBase
     }
     */
 
-    public void runIntake(Joystick joystick)    // Controls on Operator Controller - Gamepad (PS4 Controller I think)
+    public void runIntake(Joystick joystick)    // Controls on Operator Controller
     {
         if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube / Cone Intake - Right Front Bumper
         {
-            intakeLeft.set(ControlMode.PercentOutput, -1); // TK45 - Probs need to adjust speed
+            // NEED TO ADD: IF HIGH CURRENT, STOP / HOLD
+            intakeLeft.set(ControlMode.PercentOutput, 0.25); 
+            intakeRight.set(ControlMode.PercentOutput, -0.25); 
         } 
         else if (joystick.getRawButton(XboxController.Button.kLeftBumper.value)) // Cube / Cone Outtake - Left Front Bumper
         {
-            intakeLeft.set(ControlMode.PercentOutput, 0.7); // TK45 - Probs need to adjust speed
+            intakeLeft.set(ControlMode.PercentOutput, -1); 
+            intakeRight.set(ControlMode.PercentOutput, 1); 
+
         } 
         else 
         {
             // Might need to add a line to set intake to cube by default when no buttons pressed
             intakeLeft.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  
+            intakeRight.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  
             // TK 45 - 10-3-23 Probably need to set to slow constant IN to hold cube (PID won't cut it); (Also, no encoder);
 
         }
+
+
+
         // For adjustable Cone / Cube Intake:
         /*
         if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube Intake - Right Front Bumper

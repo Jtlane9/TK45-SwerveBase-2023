@@ -17,11 +17,14 @@ import com.reduxrobotics.canand.CANandDevice;
 import com.reduxrobotics.canand.CANandEventLoop;
 import com.reduxrobotics.sensors.canandcoder.CANandcoder;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 
 
 public class Arm extends SubsystemBase
 {
-    private CANSparkMax arm;
+    private TalonSRX arm;
     private PIDController pidController = new PIDController(Constants.ARM_P, Constants.ARM_I, Constants.ARM_D);
 
     double target = 0;
@@ -30,12 +33,9 @@ public class Arm extends SubsystemBase
 
     public Arm() 
     {
-        arm = new CANSparkMax(60, MotorType.kBrushed);   //TK 45 - // NEED to Assign CAN ID    // NEED to change to Talon
-        m_encoder = new CANandcoder(61); // CANandCoder ID 61
-
-        arm.restoreFactoryDefaults();
-        arm.setSmartCurrentLimit(70);
-        arm.setInverted(false);      
+        arm = new TalonSRX(Constants.ArmID);
+        arm.setInverted(false);
+        m_encoder = new CANandcoder(Constants.ArmEncoderID);
     }
     
     
@@ -49,16 +49,18 @@ public class Arm extends SubsystemBase
         return target;
     }
     
+    /*
     public double armPower() 
     {
         return arm.getAppliedOutput();
     }
+    */
 
     //goto a preset
 
     public void setArmPreset(double target)
     {
-        arm.set(pidController.calculate(m_encoder.getAbsPosition(), target));
+        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsPosition(), target));    //JTL 10-9-23 CHECK THIS CONTROL MODE
     }
 
     public void setAngle(double angle) 
@@ -73,7 +75,7 @@ public class Arm extends SubsystemBase
         {
             angle = Constants.ARM_FORWARD_LIMIT;
         }
-        arm.set(pidController.calculate(m_encoder.getAbsPosition(), angle));    // Move arm to calculated postion (based on PID)
+        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsPosition(), angle));    // Move arm to calculated postion (based on PID)   //JTL 10-9-23 CHECK THIS CONTROL MODE
         target = angle;
     }
 
@@ -96,13 +98,13 @@ public class Arm extends SubsystemBase
         {
             m_encoder.setPosition(0);   // TK45 - CHANGE VALUES?
         }
-        arm.set(movementVector);
+        arm.set(ControlMode.Position, movementVector);   //JTL 10-9-23 CHECK THIS CONTROL MODE
         target = m_encoder.getAbsPosition();
     }
 
     public void holdAngle() // Maintains the current angle using PID.
     {
-        arm.set(pidController.calculate(m_encoder.getAbsPosition(), target));
+        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsPosition(), target));  //JTL 10-9-23 CHECK THIS CONTROL MODE
     }
 
     public boolean forwardArmSwitchTriggered()  // Reads limit switches

@@ -14,8 +14,14 @@ public final class Constants
 {
     public static final double stickDeadband = 0.1;
 
+    /* Intake Constants */
+    public static final int IntakeLeftID = 40;
+    public static final int IntakeRightID = 41;
 
     /* Arm Constants */   
+    public static final int ArmID = 60;
+    public static final int ArmEncoderID = 61;
+
     public static final double ARM_P = 1;
     public static final double ARM_I = 0;
     public static final double ARM_D = 0;
