@@ -26,9 +26,18 @@ public class Intake extends SubsystemBase
     public Intake() 
     {
         intakeLeft = new TalonSRX(Constants.IntakeLeftID);
+        intakeLeft.configPeakCurrentLimit(20, 10);          // 20A      // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeLeft.configPeakCurrentDuration(200, 10);      // 200ms    // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeLeft.configContinuousCurrentLimit(10, 10);    // 10A      // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeLeft.enableCurrentLimit(true);
         intakeLeft.setInverted(true);     
+
         intakeRight = new TalonSRX(Constants.IntakeRightID);
-        intakeRight.setInverted(false);
+        intakeRight.configPeakCurrentLimit(20, 10);          // 20A      // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeRight.configPeakCurrentDuration(200, 10);      // 200ms    // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeRight.configContinuousCurrentLimit(10, 10);    // 10A      // JTL 10-10-23 NEED TO CHANGE TO NOT POP CUBES
+        intakeRight.enableCurrentLimit(true);
+        intakeRight.setInverted(false); // JTL 10-10-23 CAN CHANGE TO TRUE AND REMOVE "-" from values below
     }
 
     public void setSpeed(double speed) 
@@ -50,7 +59,7 @@ public class Intake extends SubsystemBase
     {
         if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube / Cone Intake - Right Front Bumper
         {
-            // NEED TO ADD: IF HIGH CURRENT, STOP / HOLD
+            // NEED TO ADD: IF HIGH CURRENT, STOP / HOLD    -   Added current limit above, maybe this will work?
             intakeLeft.set(ControlMode.PercentOutput, 0.25); 
             intakeRight.set(ControlMode.PercentOutput, -0.25); 
         } 
@@ -58,15 +67,13 @@ public class Intake extends SubsystemBase
         {
             intakeLeft.set(ControlMode.PercentOutput, -1); 
             intakeRight.set(ControlMode.PercentOutput, 1); 
-
         } 
         else 
         {
             // Might need to add a line to set intake to cube by default when no buttons pressed
-            intakeLeft.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  
-            intakeRight.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  
-            // TK 45 - 10-3-23 Probably need to set to slow constant IN to hold cube (PID won't cut it); (Also, no encoder);
-
+            intakeLeft.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed  //  .1
+            intakeRight.set(ControlMode.PercentOutput, 0); // TK45 - Probs need to adjust speed // -.1
+            // TK 45 - 10-3-23 Probably need to set to slow constant IN to hold cube (PID won't cut it)(Also, no encoder);
         }
 
 
