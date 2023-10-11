@@ -48,6 +48,8 @@ public class AutoChooser
         m_chooser.addOption("doNothing", AutonomousMode.kDoNothing);
         m_chooser.addOption("justLeave", AutonomousMode.kJustLeave);
         m_chooser.addOption("scoreAndLeave", AutonomousMode.kScoreAndLeave);
+        m_chooser.addOption("twoPiece", AutonomousMode.kTwoPiece);
+        m_chooser.addOption("threePiece", AutonomousMode.kThreePiece);
     }
 
     public SendableChooser<AutonomousMode> getAutoChooser() 
@@ -76,7 +78,6 @@ public class AutoChooser
         );
     }
 
-
     public Command defaultAuto() 
     {
         var swerveCommand = createControllerCommand(trajectories.defaultAuto());
@@ -88,7 +89,6 @@ public class AutoChooser
 
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
-            //new SequentialCommandGroup(eventMap.get("defaultAuto")),  // JTL 10-9-23
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.defaultAuto().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
         );
@@ -113,7 +113,6 @@ public class AutoChooser
 
         return command;
     }
-
 
     public Command justLeave()
     {
@@ -144,8 +143,67 @@ public class AutoChooser
 
         SequentialCommandGroup command = new SequentialCommandGroup();
         command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
             new SequentialCommandGroup(followCommand)
+        );
+        return command;
+    }
+
+    public Command twoPiece()
+    {
+        var swerveCommand = createControllerCommand(trajectories.twoPiece());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+            swerveCommand,
+            trajectories.twoPiece().getMarkers(),
+            eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
+            new InstantCommand(() -> {
+                PathPlannerTrajectory.PathPlannerState initialState = trajectories.twoPiece().getInitialState();
+                  initialState =
+                      PathPlannerTrajectory.transformStateForAlliance(
+                          initialState, DriverStation.getAlliance());
+    
+                s_Swerve.resetOdometry(
+                    new Pose2d(
+                        initialState.poseMeters.getTranslation(), initialState.holonomicRotation));
+              }),
+              new SequentialCommandGroup(followCommand),
+              new SequentialCommandGroup(eventMap.get("scoreCubeMid"))
+        );
+        return command;
+    }
+
+    public Command threePiece() // NOT Cable Tray Side
+    {
+        var swerveCommand = createControllerCommand(trajectories.threePiece());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+            swerveCommand,
+            trajectories.threePiece().getMarkers(),
+            eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
+            new InstantCommand(() -> {
+                PathPlannerTrajectory.PathPlannerState initialState = trajectories.threePiece().getInitialState();
+                  initialState =
+                      PathPlannerTrajectory.transformStateForAlliance(
+                          initialState, DriverStation.getAlliance());
+    
+                s_Swerve.resetOdometry(
+                    new Pose2d(
+                        initialState.poseMeters.getTranslation(), initialState.holonomicRotation));
+              }),
+              new SequentialCommandGroup(followCommand),
+              new SequentialCommandGroup(eventMap.get("scoreCubeLow")),
+              new SequentialCommandGroup(followCommand),
+              new SequentialCommandGroup(eventMap.get("scoreCubeLow"))
         );
         return command;
     }
@@ -165,6 +223,12 @@ public class AutoChooser
 
             case kScoreAndLeave :
             return scoreAndLeave();
+
+            case kTwoPiece :
+            return twoPiece();
+
+            case kThreePiece :
+            return threePiece();
         }
         return defaultAuto();
     }
@@ -172,7 +236,7 @@ public class AutoChooser
     
     private enum AutonomousMode 
     {
-        kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing
+        kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing, kTwoPiece, kThreePiece
     }
 
 }

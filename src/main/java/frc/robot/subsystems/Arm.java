@@ -96,23 +96,45 @@ public class Arm extends SubsystemBase
     }
     
 
-    public void moveAngle(Joystick joystick)    // For Teleop
+    public void moveAngle(Joystick opJoystick, Joystick drJoystick)    // For Teleop
     {   
-        // Check Buttons
-        if (joystick.getRawButton(XboxController.Button.kY.value))  //Y Button Pressed - MID FRONT SCORE
+        // IF OP Joystick IS Connected:
+        if(opJoystick.isConnected())
         {
-            //System.out.print("MID FRONT SCORE");
-            target = Constants.ARM_MID_FRONT_SCORE; 
+            // Check Buttons
+            if (opJoystick.getRawButton(XboxController.Button.kY.value))  // Y Button Pressed - MID FRONT SCORE - OP
+            {
+                //System.out.print("MID FRONT SCORE");
+                target = Constants.ARM_MID_FRONT_SCORE; 
+            }
+            else if (opJoystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE - OP
+            {
+                //System.out.print("LOW FRONT SCORE");
+                target = Constants.ARM_LOW_FRONT_SCORE; 
+            }
+            else    // No Button Pressed
+            {
+                //System.out.print("HOLD ANGLE");
+                holdAngle();
+            }
         }
-        else if (joystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE
+        else    // OP Joystick NOT Connected
         {
-            //System.out.print("LOW FRONT SCORE");
-            target = Constants.ARM_LOW_FRONT_SCORE; 
-        }
-        else    // No Button Pressed
-        {
-            //System.out.print("HOLD ANGLE");
-            holdAngle();
+            if (drJoystick.getRawButton(XboxController.Button.kY.value))  // Y Button Pressed - MID FRONT SCORE - DRIVER
+            {
+                //System.out.print("MID FRONT SCORE");
+                target = Constants.ARM_MID_FRONT_SCORE; 
+            }
+            else if (drJoystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE - DRIVER
+            {
+                //System.out.print("LOW FRONT SCORE");
+                target = Constants.ARM_LOW_FRONT_SCORE; 
+            }
+            else    // No Button Pressed
+            {
+                //System.out.print("HOLD ANGLE");
+                holdAngle();
+            }
         }
 
         // Move to target

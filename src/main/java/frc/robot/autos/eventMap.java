@@ -31,10 +31,10 @@ public class eventMap
             "scoreCubeMid", 
             Commands.sequence(
             new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_FRONT_SCORE)),
-            new WaitCommand(0.75), // TK45 - May need to adjust time
-            new InstantCommand(() -> s_Intake.setSpeed(-1)),  // Spit out cube // TK45 - May need to adjust speed / directon
-            new WaitCommand(0.5),   // TK 45 - May need to adjust time
-            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE))
+            //new WaitCommand(0.75), // TK45 - May need to adjust time
+            new InstantCommand(() -> s_Intake.setSpeed(-1))  // Spit out cube // TK45 - May need to adjust speed / directon
+            //new WaitCommand(0.5),   // TK 45 - May need to adjust time
+            //new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE))
             )
         );
 
@@ -46,6 +46,15 @@ public class eventMap
             new InstantCommand(() -> s_Intake.setSpeed(-1)),  // Spit out cube // TK45 - May need to adjust speed / directon
             new WaitCommand(0.5),   // TK 45 - May need to adjust time
             new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE))
+            )
+        );
+
+        eventMap.put(   // Picks up CUBE from GROUND
+            "pickupCubeLow",
+            Commands.sequence(
+                new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE)),
+                new WaitCommand(0.75),  // TK45 - May need to adjust time
+                new InstantCommand(() -> s_Intake.setSpeed(1)) // Intakes cube // TK45 - May need to adjust speed / directon
             )
         );
 

@@ -59,7 +59,7 @@ public class RobotContainer
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
+    private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kB.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     /* Variables */
@@ -85,7 +85,8 @@ public class RobotContainer
       s_Intake.setDefaultCommand(
         new TeleopIntake(
           s_Intake,
-          operator
+          operator,
+          driver
         )      
       );
 
@@ -94,8 +95,8 @@ public class RobotContainer
           s_Arm,
           operator,
           operator.getRawButton(XboxController.Button.kA.value),
-          operator.getRawButton(XboxController.Button.kY.value)
-
+          operator.getRawButton(XboxController.Button.kY.value),
+          driver
         )
       );
         

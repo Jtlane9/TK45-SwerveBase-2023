@@ -19,8 +19,8 @@
         "names": [
           "scoreCubeMid"
         ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "before",
+        "executionBehavior": "sequential",
+        "waitBehavior": "none",
         "waitTime": 0
       }
     },

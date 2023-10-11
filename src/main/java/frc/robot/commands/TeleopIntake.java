@@ -12,12 +12,14 @@ public class TeleopIntake extends CommandBase
 {
   private Intake s_Intake;
   private Joystick operator;
+  private Joystick driver;
  // private DoubleSupplier vec;
   /** Creates a new TeleopRoller. */
-  public TeleopIntake(Intake s_Intake, Joystick operator) 
+  public TeleopIntake(Intake s_Intake, Joystick operator, Joystick driver) 
   {
     this.s_Intake = s_Intake;
     this.operator = operator;
+    this.driver = driver;
     addRequirements(s_Intake); 
   // Called when the command is initially scheduled.
   }
@@ -26,7 +28,7 @@ public class TeleopIntake extends CommandBase
   @Override
   public void execute() 
   {
-    s_Intake.runIntake(operator);
+    s_Intake.runIntake(operator, driver);
   }
 
 }
