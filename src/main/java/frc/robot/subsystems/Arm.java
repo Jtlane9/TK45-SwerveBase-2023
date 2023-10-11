@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 
@@ -24,6 +25,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
+import edu.wpi.first.wpilibj.XboxController;
+
 public class Arm extends SubsystemBase
 {
     private TalonSRX arm;
@@ -33,7 +36,9 @@ public class Arm extends SubsystemBase
     int angle;
     DigitalInput armSwitchForward = new DigitalInput(1); //limit switch that re-zeros the arm encoder when forward // Probably won't use
     //CANandcoder m_encoder;  // Use if CANanCoder doesn't work
-    DutyCycleEncoder m_encoder;   
+    DutyCycleEncoder m_encoder;
+    //PIDController pid;
+    //double set_value;
 
     public Arm() 
     {
@@ -42,7 +47,11 @@ public class Arm extends SubsystemBase
         //m_encoder = new CANandcoder(Constants.ArmEncoderID);  // Use if CANandCoder
         m_encoder = new DutyCycleEncoder(0);  // Use if CANanCoder doesn't work
     }
-    
+
+    public void periodic()
+    {
+        SmartDashboard.putNumber("Arm Angle", getAngle());
+    }
     
     /*
       // JTL 10-10-23 Comment out to work with REV Through Bore
@@ -56,75 +65,63 @@ public class Arm extends SubsystemBase
     {
         return target;
     }
-    
-    /*
-    public double armPower() 
+
+    public double getAngle()
     {
-        return arm.getAppliedOutput();
+        // Debug:
+        //System.out.print("Get Angle: ");
+        //System.out.println(m_encoder.getAbsolutePosition()*360-151.8);
+        return m_encoder.getAbsolutePosition()*360-151.8;
     }
-    */
 
     //goto a preset
 
     public void setArmPreset(double target)
     {
+        //System.out.print("set preset");
         arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));    //JTL 10-9-23 CHECK THIS CONTROL MODE
     }
 
-    public void setAngle(double angle) 
+    public void setAngle(double angle)  // For Auto
     {
-        System.out.print("setting angle");
-        if (angle < m_encoder.getAbsolutePosition() && !forwardArmSwitchTriggered()) // Re-Zeroes Encoder    // May need to remove limit switch reference - if not using
-        {
-            m_encoder.reset();
-            angle = 0;
-        } 
-        else if (angle > m_encoder.getAbsolutePosition() && m_encoder.getAbsolutePosition() > Constants.ARM_REVERSE_LIMIT)    // Resets upper limit to prevent exceeding maximum
-        {
-            angle = Constants.ARM_FORWARD_LIMIT;
-        }
-        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), angle));    // Move arm to calculated postion (based on PID)   //JTL 10-9-23 CHECK THIS CONTROL MODE
+        // Debug:
+        /*
+        System.out.print("setting angle: ");
+        System.out.println(pidController.calculate(getAngle(), angle));
+        System.out.print("Current: ");
+        System.out.println(arm.getSupplyCurrent());
+        */
+        arm.set(ControlMode.PercentOutput, pidController.calculate(getAngle(), angle));
         target = angle;
     }
+    
 
-    public void moveArm(double movementVector)  // What actually moves the arm when a position is set. (JTL - ????)
-    {
-        
-        if(movementVector < 0 && forwardArmSwitchTriggered())
+    public void moveAngle(Joystick joystick)    // For Teleop
+    {   
+        // Check Buttons
+        if (joystick.getRawButton(XboxController.Button.kY.value))  //Y Button Pressed - MID FRONT SCORE
         {
-            target = 0;
+            //System.out.print("MID FRONT SCORE");
+            target = Constants.ARM_MID_FRONT_SCORE; 
+        }
+        else if (joystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE
+        {
+            //System.out.print("LOW FRONT SCORE");
+            target = Constants.ARM_LOW_FRONT_SCORE; 
+        }
+        else    // No Button Pressed
+        {
+            //System.out.print("HOLD ANGLE");
             holdAngle();
-            return;
         }
-        else if(movementVector > 0 && m_encoder.getAbsolutePosition() > Constants.ARM_FORWARD_LIMIT)
-        {
-            target = Constants.ARM_FORWARD_LIMIT;
-            holdAngle();
-            return;
-        }
-        if(forwardArmSwitchTriggered())
-        {
-            m_encoder.reset();       // TK45 - CHANGE VALUES?
-        }
-        arm.set(ControlMode.Position, movementVector);   //JTL 10-9-23 CHECK THIS CONTROL MODE
-        target = m_encoder.getAbsolutePosition();
+
+        // Move to target
+        arm.set(ControlMode.PercentOutput, pidController.calculate(getAngle(), target));
     }
+    
 
     public void holdAngle() // Maintains the current angle using PID.
     {
         arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));  //JTL 10-9-23 CHECK THIS CONTROL MODE
-    }
-
-    public boolean forwardArmSwitchTriggered()  // Reads limit switches
-    {
-        return !armSwitchForward.get();
-    }
-
-    public void checkLimitSwitches()    // Updates limit switch variables if need be - rezeroes arm position.
-    {
-        if(forwardArmSwitchTriggered())
-        {
-            m_encoder.reset();   // TK45 - CHANGE VALUES?
-        }
     }
 }

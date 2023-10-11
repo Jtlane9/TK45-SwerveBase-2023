@@ -17,15 +17,12 @@ import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-
-import com.reduxrobotics.canand.CANandEventLoop;
-import com.reduxrobotics.sensors.canandcoder.CANandcoder;
-import com.reduxrobotics.sensors.canandcoder.CANandcoderStatus;
 
 import frc.robot.autos.AutoChooser;
 import frc.robot.autos.AutoTrajectories;
@@ -50,11 +47,6 @@ public class RobotContainer
     private final AutoTrajectories trajectories = new AutoTrajectories();
     private final AutoChooser chooser = new AutoChooser(trajectories, map.getMap(), s_Swerve, s_Intake, s_Arm);
 
-    //private final Arm s_Arm = new Arm(s_Arm.getEncoder());  // TK 45 - FIX THIS JTL 9-12-23
-
-    private String pPlan = null;
-    public double intakeVec = 0;
-
     public CommandBase autoCode = Commands.sequence(new PrintCommand("no auto selected"));
 
     /* Controllers */
@@ -66,28 +58,13 @@ public class RobotContainer
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
 
-    //op controls
-    //private final int wristAxis = XboxController.Axis.kLeftY.value; // Left Joystick
-    //private final int ArmAxis = XboxController.Axis.kRightY.value;
-
-    private final JoystickButton y_button_op = new JoystickButton(operator, XboxController.Button.kY.value); // Y Button
-    private final JoystickButton x_button_op = new JoystickButton(operator, XboxController.Button.kX.value); // X Button
-    private final JoystickButton a_button_op = new JoystickButton(operator, XboxController.Button.kA.value); // A BUtton
-    private final JoystickButton b_button_op = new JoystickButton(operator, XboxController.Button.kB.value); // B Button
-
-
-    //private final POVButton w_preset_0 = new POVButton(operator, 0);
-    //private final POVButton w_preset_1 = new POVButton(operator, 90);
-    //private final POVButton w_preset_2 = new POVButton(operator, 180);
-
-
     /* Driver Buttons */
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
-
     /* Variables */
     boolean driveStatus = false;
+    double setPoint;
 
     /* PathPlanner Setup */
     public static final HashMap<String, Command> AUTO_EVENT_MAP = new HashMap<>();
@@ -111,6 +88,16 @@ public class RobotContainer
           operator
         )      
       );
+
+      s_Arm.setDefaultCommand(
+        new TeleopArm(
+          s_Arm,
+          operator,
+          operator.getRawButton(XboxController.Button.kA.value),
+          operator.getRawButton(XboxController.Button.kY.value)
+
+        )
+      );
         
       // Configure the button bindings
       configureButtonBindings();
@@ -127,32 +114,8 @@ public class RobotContainer
 
     private void configureButtonBindings() 
     {
-        /* Driver Buttons (and op buttons) */
+        //Driver Buttons (and op buttons) 
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
-
-        a_button_op.onTrue(   // Preset to go to front LOW Pickup / Score
-          Commands.sequence(
-            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_FRONT_SCORE))
-          )
-        );
-
-        b_button_op.onTrue(  // Preset to go to front MID Pickup / Score
-          Commands.sequence(
-            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_FRONT_SCORE)) // TK 45 - FIX THIS JTL 9-12-23
-          )
-        );
-
-        x_button_op.onTrue(  // Preset to go to back LOW Pickup / Score
-          Commands.sequence(
-            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_LOW_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
-          )
-        );
-
-        y_button_op.onTrue(  // Preset to go to back MID Pickup / Score
-          Commands.sequence(
-            new InstantCommand(() -> s_Arm.setAngle(Constants.ARM_MID_BACK_SCORE))  // TK 45 - FIX THIS JTL 9-12-23
-          )
-        );
     }
 
 

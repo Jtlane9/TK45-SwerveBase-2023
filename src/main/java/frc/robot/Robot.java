@@ -29,6 +29,8 @@ public class Robot extends TimedRobot
 
   private RobotContainer m_robotContainer;
 
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -63,7 +65,6 @@ public class Robot extends TimedRobot
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.printValues();
-    
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

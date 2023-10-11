@@ -22,7 +22,7 @@ public final class Constants
     public static final int ArmID = 60;
     public static final int ArmEncoderID = 61;
 
-    public static final double ARM_P = 1;
+    public static final double ARM_P = .02;
     public static final double ARM_I = 0;
     public static final double ARM_D = 0;
     
@@ -30,11 +30,10 @@ public final class Constants
     public static final double ARM_FORWARD_LIMIT = -45;     // TK 45 - CHANGE VALUE TO ACTUAL FORWARD LIMIT
 
     /* Arm Presets */
-    public static final double ARM_LOW_FRONT_SCORE = -15;   // TK 45 - Change Value to actual front low preset
+    public static final double ARM_LOW_FRONT_SCORE = 0;   // TK 45 - Change Value to actual front low preset
     public static final double ARM_MID_FRONT_SCORE = 45;    // TK 45 - Change Value to actual front low preset
     public static final double ARM_LOW_BACK_SCORE = 135;    // TK 45 - Change Value to actual front low preset // not needed
     public static final double ARM_MID_BACK_SCORE = 180;    // TK 45 - Change Value to actual front low preset // not needed
-
 
     public static double gyroOffset = 0;
 
@@ -47,8 +46,8 @@ public final class Constants
             COTSFalconSwerveConstants.SDSMK4i(COTSFalconSwerveConstants.driveGearRatios.SDSMK4i_L2);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(18.75);    // TK 45 - NEED TO CHANGE
-        public static final double wheelBase = Units.inchesToMeters(18.75);     // TK 45 - NEED TO CHANGE
+        public static final double trackWidth = Units.inchesToMeters(22);
+        public static final double wheelBase = Units.inchesToMeters(22);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
