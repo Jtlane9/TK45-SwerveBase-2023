@@ -46,15 +46,6 @@ public class Intake extends SubsystemBase
         intakeRight.set(ControlMode.PercentOutput, speed);
     }
 
-
-    // I think we can go without this, we just won't get feedback on intake velocity, which is probably fine.
-    /* 
-    public double getSpeed()    
-    { 
-        return intake.get();
-    }
-    */
-
     public void runIntake(Joystick joystick)    // Controls on Operator Controller
     {
         if (joystick.getRawButton(XboxController.Button.kRightBumper.value))    // Cube / Cone Intake - Right Front Bumper
