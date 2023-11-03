@@ -1,26 +1,14 @@
 package frc.robot;
 
 import java.util.HashMap;
-import java.util.List;
-
-import com.ctre.phoenix.sensors.Pigeon2;
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj2.command.*;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
@@ -43,6 +31,7 @@ public class RobotContainer
     private final Intake s_Intake = new Intake();
     private final Arm s_Arm = new Arm();
 
+    /* Pathplanner Setup */
     private final eventMap map = new eventMap(s_Swerve, s_Intake, s_Arm);
     private final AutoTrajectories trajectories = new AutoTrajectories();
     private final AutoChooser chooser = new AutoChooser(trajectories, map.getMap(), s_Swerve, s_Intake, s_Arm);
@@ -53,7 +42,7 @@ public class RobotContainer
     private final Joystick driver = new Joystick(0);
     private final Joystick operator = new Joystick(1);
 
-    /* Drive Controls */
+    /* Drive Controls */  // For Swerve
     private final int translationAxis = XboxController.Axis.kLeftY.value;
     private final int strafeAxis = XboxController.Axis.kLeftX.value;
     private final int rotationAxis = XboxController.Axis.kRightX.value;
@@ -99,7 +88,7 @@ public class RobotContainer
           driver
         )
       );
-        
+
       // Configure the button bindings
       configureButtonBindings();
 
@@ -118,7 +107,6 @@ public class RobotContainer
         //Driver Buttons (and op buttons) 
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));
     }
-
 
     public void printValues()
     {
