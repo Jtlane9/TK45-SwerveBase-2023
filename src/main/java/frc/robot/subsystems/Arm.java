@@ -1,13 +1,7 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -15,17 +9,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 
-import com.reduxrobotics.canand.CANandDevice;
-import com.reduxrobotics.canand.CANandEventLoop;
-import com.reduxrobotics.sensors.canandcoder.CANandcoder;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
-import edu.wpi.first.wpilibj.XboxController;
 
 public class Arm extends SubsystemBase
 {
@@ -44,8 +29,7 @@ public class Arm extends SubsystemBase
     {
         arm = new TalonSRX(Constants.ArmID);
         arm.setInverted(false);
-        //m_encoder = new CANandcoder(Constants.ArmEncoderID);  // Use if CANandCoder
-        m_encoder = new DutyCycleEncoder(0);  // Use if CANanCoder doesn't work
+        m_encoder = new DutyCycleEncoder(0);  
     }
 
     public void periodic()
@@ -53,13 +37,6 @@ public class Arm extends SubsystemBase
         SmartDashboard.putNumber("Arm Angle", getAngle());
     }
     
-    /*
-      // JTL 10-10-23 Comment out to work with REV Through Bore
-    public CANandcoder getEncoder()
-    {
-        return m_encoder;
-    }
-    */
 
     public double getTarget() 
     {
@@ -68,9 +45,6 @@ public class Arm extends SubsystemBase
 
     public double getAngle()
     {
-        // Debug:
-        //System.out.print("Get Angle: ");
-        //System.out.println(m_encoder.getAbsolutePosition()*360-151.8);
         return m_encoder.getAbsolutePosition()*360-151.8;
     }
 
@@ -78,19 +52,11 @@ public class Arm extends SubsystemBase
 
     public void setArmPreset(double target)
     {
-        //System.out.print("set preset");
-        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));    //JTL 10-9-23 CHECK THIS CONTROL MODE
+        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));
     }
 
-    public void setAngle(double angle)  // For Auto
+    public void setAngle(double angle)  // Auto / Tele
     {
-        // Debug:
-        /*
-        System.out.print("setting angle: ");
-        System.out.println(pidController.calculate(getAngle(), angle));
-        System.out.print("Current: ");
-        System.out.println(arm.getSupplyCurrent());
-        */
         arm.set(ControlMode.PercentOutput, pidController.calculate(getAngle(), angle));
         target = angle;
     }
@@ -104,17 +70,18 @@ public class Arm extends SubsystemBase
             // Check Buttons
             if (opJoystick.getRawButton(XboxController.Button.kY.value))  // Y Button Pressed - MID FRONT SCORE - OP
             {
-                //System.out.print("MID FRONT SCORE");
                 target = Constants.ARM_MID_FRONT_SCORE; 
             }
             else if (opJoystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE - OP
             {
-                //System.out.print("LOW FRONT SCORE");
                 target = Constants.ARM_LOW_FRONT_SCORE; 
             }
+            else if (opJoystick.getRawButton(XboxController.Button.kX.value))   // X Button Pressed - STRAIGT UP - OP
+            {
+                target = Constants.ARM_TOP;
+            }  
             else    // No Button Pressed
             {
-                //System.out.print("HOLD ANGLE");
                 holdAngle();
             }
         }
@@ -122,21 +89,21 @@ public class Arm extends SubsystemBase
         {
             if (drJoystick.getRawButton(XboxController.Button.kY.value))  // Y Button Pressed - MID FRONT SCORE - DRIVER
             {
-                //System.out.print("MID FRONT SCORE");
                 target = Constants.ARM_MID_FRONT_SCORE; 
             }
             else if (drJoystick.getRawButton(XboxController.Button.kA.value))  // A Button Pressed - LOW FRONT SCORE - DRIVER
             {
-                //System.out.print("LOW FRONT SCORE");
                 target = Constants.ARM_LOW_FRONT_SCORE; 
             }
+            else if (opJoystick.getRawButton(XboxController.Button.kX.value))   // X Button Pressed - STRAIGT UP - OP
+            {
+                target = Constants.ARM_TOP;
+            }  
             else    // No Button Pressed
             {
-                //System.out.print("HOLD ANGLE");
                 holdAngle();
             }
         }
-
         // Move to target
         arm.set(ControlMode.PercentOutput, pidController.calculate(getAngle(), target));
     }
@@ -144,6 +111,6 @@ public class Arm extends SubsystemBase
 
     public void holdAngle() // Maintains the current angle using PID.
     {
-        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));  //JTL 10-9-23 CHECK THIS CONTROL MODE
+        arm.set(ControlMode.Position, pidController.calculate(m_encoder.getAbsolutePosition(), target));
     }
 }

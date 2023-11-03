@@ -4,6 +4,7 @@ public class PathConstrains
 {
     public PathConstrains(double kmaxspeedmeterspersecond, double kmaxaccelerationmeterspersecondsquared) 
     {
+        
     }
 
 }

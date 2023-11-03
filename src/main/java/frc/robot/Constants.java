@@ -31,9 +31,8 @@ public final class Constants
 
     /* Arm Presets */
     public static final double ARM_LOW_FRONT_SCORE = 0;   // TK 45 - Change Value to actual front low preset
-    public static final double ARM_MID_FRONT_SCORE = 45;    // TK 45 - Change Value to actual front low preset
-    public static final double ARM_LOW_BACK_SCORE = 135;    // TK 45 - Change Value to actual front low preset // not needed
-    public static final double ARM_MID_BACK_SCORE = 180;    // TK 45 - Change Value to actual front low preset // not needed
+    public static final double ARM_MID_FRONT_SCORE = 60;    // TK 45 - Change Value to actual front low preset
+    public static final double ARM_TOP = 95;
 
     public static double gyroOffset = 0;
 
@@ -116,11 +115,11 @@ public final class Constants
 
         /* Swerve Profiling Values */
         /** Meters per Second */    // Controls the translational speed and acceleration of the robot (left joystick)
-        public static final double maxSpeed = 4.1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
-        public static final double maxAccel = 4.1; //TODO: This must be tuned to specific robot // TK 45 JTL 9-26-23 Was 4.1
+        public static final double maxSpeed = 4.1;
+        public static final double maxAccel = 4.1;
 
         /** Radians per Second */ // Controls the rotational speed of the robot (right joystick)
-        public static final double maxAngularVelocity = 10; //TODO: This must be tuned to specific robot  // TK 45 JTL 9-26-23 Was 10
+        public static final double maxAngularVelocity = 10;
         
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

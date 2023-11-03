@@ -8,7 +8,7 @@ import frc.robot.Constants;
 
 public class AutoTrajectories 
 {
-    private PathPlannerTrajectory defaultAuto, justLeave, scoreAndLeave, doNothing, twoPiece, threePiece;
+    private PathPlannerTrajectory defaultAuto, justLeave, scoreAndLeave, doNothing, twoPiece, threePiece, scoreAndLeaveRed, scoreLeaveBumpBlue;
 
     private final PathConstraints constraints, slowConstraints;
     
@@ -52,5 +52,17 @@ public class AutoTrajectories
     {
         threePiece = PathPlanner.loadPath("threePiece", constraints);
         return threePiece;
+    }
+
+    public PathPlannerTrajectory scoreAndLeaveRed()
+    {
+        scoreAndLeaveRed = PathPlanner.loadPath("scoreAndLeaveRed", constraints);
+        return scoreAndLeaveRed;
+    }
+
+    public PathPlannerTrajectory scoreLeaveBumpBlue()
+    {
+        scoreLeaveBumpBlue = PathPlanner.loadPath("scoreLeaveBumpBlue", constraints);
+        return scoreLeaveBumpBlue;
     }
 }

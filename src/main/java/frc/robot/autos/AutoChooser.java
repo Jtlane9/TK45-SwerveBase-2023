@@ -29,8 +29,6 @@ public class AutoChooser
 {
     private final AutoTrajectories trajectories;
     private final Swerve s_Swerve;
-    private final Intake s_Intake;
-    private final Arm s_Arm;
     
     private final SendableChooser<AutonomousMode> m_chooser = new SendableChooser<>();
     private HashMap<String, Command> eventMap;
@@ -39,8 +37,6 @@ public class AutoChooser
     public AutoChooser(AutoTrajectories trajectories, HashMap<String, Command> eventMap, Swerve s_Swerve, Intake s_Intake, Arm s_Arm) 
     {
         this.s_Swerve = s_Swerve;
-        this.s_Intake = s_Intake;
-        this.s_Arm = s_Arm;
         this.eventMap = eventMap;
         this.trajectories = trajectories;
         
@@ -50,9 +46,11 @@ public class AutoChooser
         m_chooser.addOption("scoreAndLeave", AutonomousMode.kScoreAndLeave);
         m_chooser.addOption("twoPiece", AutonomousMode.kTwoPiece);
         m_chooser.addOption("threePiece", AutonomousMode.kThreePiece);
+        m_chooser.addOption("scoreAndLeaveRed", AutonomousMode.kScoreAndLeaveRed);
+        m_chooser.addOption("scoreLeaveBumpBlue", AutonomousMode.kScoreLeaveBumpBlue);
     }
 
-    public SendableChooser<AutonomousMode> getAutoChooser() 
+    public SendableChooser<AutonomousMode> getAutoChooser()
     {
         return m_chooser;
     }
@@ -78,7 +76,7 @@ public class AutoChooser
         );
     }
 
-    public Command defaultAuto() 
+    public Command defaultAuto() // works?
     {
         var swerveCommand = createControllerCommand(trajectories.defaultAuto());
         
@@ -95,7 +93,7 @@ public class AutoChooser
         return command;
     }
 
-    public Command doNothing()
+    public Command doNothing() // works
     {
         var swerveCommand = createControllerCommand(trajectories.doNothing());
 
@@ -114,7 +112,7 @@ public class AutoChooser
         return command;
     }
 
-    public Command justLeave()
+    public Command justLeave()  // works
     {
         var swerveCommand = createControllerCommand(trajectories.justLeave());
 
@@ -132,7 +130,7 @@ public class AutoChooser
         return command;
     }
 
-    public Command scoreAndLeave()
+    public Command scoreAndLeave()  // FOR BLUE - works
     {
         var swerveCommand = createControllerCommand(trajectories.scoreAndLeave());
 
@@ -145,12 +143,52 @@ public class AutoChooser
         command.addCommands(
             new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
             new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
-            new SequentialCommandGroup(followCommand)
+            new SequentialCommandGroup(followCommand),
+            new SequentialCommandGroup(eventMap.get("autoCorrect"))
         );
         return command;
     }
 
-    public Command twoPiece()
+    public Command scoreAndLeaveRed()  // FOR RED - never tested 
+    {
+        var swerveCommand = createControllerCommand(trajectories.scoreAndLeave());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+            swerveCommand,
+            trajectories.scoreAndLeave().getMarkers(),
+            eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
+            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
+            new SequentialCommandGroup(followCommand),
+            new SequentialCommandGroup(eventMap.get("autoCorrect"))
+        );
+        return command;
+    }
+
+    public Command scoreLeaveBumpBlue()  // FOR BLUE - never tested
+    {
+        var swerveCommand = createControllerCommand(trajectories.scoreLeaveBumpBlue());
+
+        FollowPathWithEvents followCommand = new FollowPathWithEvents(
+            swerveCommand,
+            trajectories.scoreAndLeave().getMarkers(),
+            eventMap);
+
+        SequentialCommandGroup command = new SequentialCommandGroup();
+        command.addCommands(
+            new SequentialCommandGroup(eventMap.get("scoreCubeMid")),
+            new InstantCommand(() -> s_Swerve.resetOdometry(trajectories.scoreAndLeave().getInitialHolonomicPose())),
+            new SequentialCommandGroup(followCommand),
+            new SequentialCommandGroup(eventMap.get("autoCorrect"))
+        );
+        return command;
+    }
+
+
+    public Command twoPiece() // never tested
     {
         var swerveCommand = createControllerCommand(trajectories.twoPiece());
 
@@ -171,14 +209,16 @@ public class AutoChooser
                 s_Swerve.resetOdometry(
                     new Pose2d(
                         initialState.poseMeters.getTranslation(), initialState.holonomicRotation));
-              }),
+              }
+              ),
+
               new SequentialCommandGroup(followCommand),
               new SequentialCommandGroup(eventMap.get("scoreCubeMid"))
         );
         return command;
     }
 
-    public Command threePiece() // NOT Cable Tray Side
+    public Command threePiece() // NOT Cable Tray Side - // never tested
     {
         var swerveCommand = createControllerCommand(trajectories.threePiece());
 
@@ -229,6 +269,9 @@ public class AutoChooser
 
             case kThreePiece :
             return threePiece();
+
+            case kScoreAndLeaveRed :
+            return scoreAndLeave();
         }
         return defaultAuto();
     }
@@ -236,7 +279,7 @@ public class AutoChooser
     
     private enum AutonomousMode 
     {
-        kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing, kTwoPiece, kThreePiece
+        kDefaultAuto, kJustLeave, kScoreAndLeave, kDoNothing, kTwoPiece, kThreePiece, kScoreAndLeaveRed, kScoreLeaveBumpBlue
     }
 
 }
